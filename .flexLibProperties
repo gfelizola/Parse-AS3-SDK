@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="com.parse.intern.Encodable"/>
+    <classEntry path="com.parse.ParseError"/>
+    <classEntry path="com.parse.ParseClient"/>
+    <classEntry path="com.parse.intern.FieldOperation"/>
+    <classEntry path="com.parse.intern.AddOperation"/>
+    <classEntry path="com.parse.intern.AddUniqueOperation"/>
+    <classEntry path="com.parse.intern.DeleteOperation"/>
+    <classEntry path="com.parse.intern.IncrementOperation"/>
+    <classEntry path="com.parse.intern.RemoveOperation"/>
+    <classEntry path="com.parse.intern.SetOperation"/>
+    <classEntry path="com.parse.intern.ParseRelationOperation"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>
