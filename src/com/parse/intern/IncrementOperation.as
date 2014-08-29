@@ -27,26 +27,23 @@ package com.parse.intern
 		
 		public function mergeWithPrevious(previous:FieldOperation):FieldOperation
 		{
-//			PHP CODE
-//			if (!$previous) {
-//				return $this;
-//			}
-//			if ($previous instanceof DeleteOperation) {
-//				return new SetOperation($this->value);
-//			}
-//			if ($previous instanceof SetOperation) {
-//				return new SetOperation($previous->getValue() + $this->value);
-//			}
-//			if ($previous instanceof IncrementOperation) {
-//				return new IncrementOperation(
-//					$previous->getValue() + $this->value
-//				);
-//			}
-//			throw new ParseException(
-//				'Operation is invalid after previous operation.'
-//			);
+			if( ! previous ) return this;
 			
-			return null;
+			if( previous is DeleteOperation ){
+				return new SetOperation(this._value);
+			}
+			
+			var oldList:Array;
+			
+			if( previous is SetOperation ){
+				return new SetOperation( SetOperation(previous).value + this._value );
+			}
+			
+			if( previous is IncrementOperation ){
+				return new IncrementOperation( IncrementOperation(previous).value + this._value );
+			}
+			
+			throw new ParseError('Operation is invalid after previous operation.');
 		}
 		
 		public function _encode():*

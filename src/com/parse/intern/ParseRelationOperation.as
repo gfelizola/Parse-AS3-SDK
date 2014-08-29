@@ -1,5 +1,7 @@
 package com.parse.intern
 {
+	import com.parse.ParseClient;
+
 	public class ParseRelationOperation implements FieldOperation
 	{
 		private var _targetClassName:String;
@@ -74,40 +76,42 @@ package com.parse.intern
 		
 		public function _encode():*
 		{
-//			PHP CODE
-//			$addRelation = array();
-//			$removeRelation = array();
-//			if (!empty($this->relationsToAdd)) {
-//				$addRelation = array(
-//					'__op' => 'AddRelation',
-//					'objects' => ParseClient::_encode(
-//						self::convertToOneDimensionalArray($this->relationsToAdd),
-//						true
-//					)
-//				);
-//			}
-//			if (!empty($this->relationsToRemove)) {
-//				$removeRelation = array(
-//					'__op' => 'RemoveRelation',
-//					'objects' => ParseClient::_encode(
-//						self::convertToOneDimensionalArray($this->relationsToRemove),
-//						true
-//					)
-//				);
-//			}
-//			if (!empty($addRelation) && !empty($removeRelation)) {
-//				return array(
-//					'__op' => 'Batch',
-//					'ops' => [$addRelation, $removeRelation]
-//				);
-//			}
-//			return empty($addRelation) ? $removeRelation : $addRelation;
+			var addRelation:Object = null;
+			var removeRelation:Object = null;
 			
-			return null;
+			if( this._relationsToAdd.length > 0 ){
+				addRelation = {};
+				addRelation["__op"] = "AddRelation";
+				addRelation["objects"] = ParseClient.encode( ParseRelationOperation.convertToOneDimensionalArray( this._relationsToAdd ), true);
+			}
+			
+			if( this._relationsToRemove.length > 0 ){
+				addRelation = {};
+				addRelation["__op"] = "RemoveRelation";
+				addRelation["objects"] = ParseClient.encode( ParseRelationOperation.convertToOneDimensionalArray( this._relationsToRemove ), true);
+			}
+			
+			if( addRelation !== null && removeRelation !== null ){
+				var encodedObject:Object = {};
+				encodedObject["__op"] = "Batch";
+				encodedObject["ops"] = [addRelation, removeRelation];
+				return encodedObject;
+			}
+			
+			return addRelation ? addRelation : removeRelation;
 		}
 		
 		private function checkAndAssignClassName(objects:Array):void
 		{
+			for (var i:int = 0; i < objects.length; i++) 
+			{
+				var object:* = objects[i];
+				if( this._targetClassName === null ){
+//					this._targetClassName = 
+				}
+			}
+			
+			
 //			PHP CODE
 //			foreach ($objects as $object) {
 //				if ($this->targetClassName === null) {

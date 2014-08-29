@@ -5,33 +5,32 @@ package com.parse.intern
 	
 	public class AddUniqueOperation implements FieldOperation
 	{
-		private var objects:Array;
+		private var _objects:Array;
 		
 		public function AddUniqueOperation(objs:Array)
 		{
 			if(! objs is Array ){
 				throw new ParseError("AddUniqueOperation requires an array.");
 			}
-			this.objects = objs;
+			this._objects = objs;
 		}
 		
 		public function get value():Array
 		{
-			return this.objects;
+			return this._objects;
 		}
 		
 		public function apply(oldValue:*, object:*, key:String):*
 		{
-			if (!oldValue) return this.objects;
+			if (!oldValue) return this._objects;
 			
 			if (! oldValue is Array) {
 				oldValue = new Array(oldValue);
 			}
 			
-			for (var i:int = 0; i < this.objects.length; i++) 
+			for (var i:int = 0; i < this._objects.length; i++) 
 			{
-				var obj:* = this.objects[i];
-				
+				var obj:* = this._objects[i];
 				
 			}
 			
@@ -57,35 +56,28 @@ package com.parse.intern
 		
 		public function mergeWithPrevious(previous:FieldOperation):FieldOperation
 		{
-//			PHP CODE
-//			if (!$previous) {
-//				return $this;
-//			}
-//			if ($previous instanceof DeleteOperation) {
-//				return new SetOperation($this->objects);
-//			}
-//			if ($previous instanceof SetOperation) {
-//				$oldValue = $previous->getValue();
-//				$result = $this->_apply($oldValue, null, null);
-//				return new SetOperation($result);
-//			}
-//			if ($previous instanceof AddUniqueOperation) {
-//				$oldList = $previous->getValue();
-//				$result = $this->_apply($oldList, null, null);
-//				return new AddUniqueOperation($result);
-//			}
-//			throw new ParseException(
-//				'Operation is invalid after previous operation.'
-//			);
+			if( ! previous ) return this;
 			
-			return null;
+			if( previous is DeleteOperation ){
+				return new SetOperation(this._objects);
+			}
+			
+			if( previous is SetOperation ){
+				return new SetOperation( this.apply( SetOperation(previous).value, null, null) );
+			}
+			
+			if( previous is AddUniqueOperation ){
+				return new AddUniqueOperation( this.apply( AddOperation(previous).value, null, null) );
+			}
+			
+			throw new ParseError('Operation is invalid after previous operation.');
 		}
 		
 		public function _encode():*
 		{
 			var encodedObject:Object = {};
 			encodedObject["__op"] = "AddUnique";
-			encodedObject["objects"] = ParseClient.encode(this.objects, true);
+			encodedObject["objects"] = ParseClient.encode(this._objects, true);
 			return encodedObject;
 		}
 		

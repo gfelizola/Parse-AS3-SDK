@@ -12,6 +12,7 @@
     <classEntry path="com.parse.intern.RemoveOperation"/>
     <classEntry path="com.parse.intern.SetOperation"/>
     <classEntry path="com.parse.intern.ParseRelationOperation"/>
+    <classEntry path="com.parse.ParseObject"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

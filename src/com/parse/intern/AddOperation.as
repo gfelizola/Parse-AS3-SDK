@@ -5,41 +5,56 @@ package com.parse.intern
 	
 	public class AddOperation implements FieldOperation
 	{
-		private var objects:Array;
+		private var _objects:Array;
 		
 		public function AddOperation(objs:Array)
 		{
 			if(! objs is Array ){
 				throw new ParseError("AddOperation requires an array.");
 			}
-			this.objects = objs;
+			this._objects = objs;
 		}
 		
 		public function get value():Array
 		{
-			return this.objects;
+			return this._objects;
 		}
 		
 		public function apply(oldValue:*, object:*, key:String):*
 		{
-			if( ! oldValue ) return this.objects;
+			if( ! oldValue ) return this._objects;
 			
-			return (oldValue as Array).concat( this.objects );
+			return (oldValue as Array).concat( this._objects );
 		}
 		
 		public function mergeWithPrevious(previous:FieldOperation):FieldOperation
 		{
 			if( ! previous ) return null;
 			
+			if( previous is DeleteOperation ){
+				return new SetOperation(this._objects);
+			}
 			
-			return null;
+			var oldList:Array;
+			
+			if( previous is SetOperation ){
+				oldList = SetOperation(previous).value;
+				return new SetOperation( this._objects.concat( oldList ) );
+			}
+			
+			if( previous is AddOperation ){
+				oldList = AddOperation(previous).value;
+				return new SetOperation( this._objects.concat( oldList ) );
+			}
+			
+			throw new ParseError('Operation is invalid after previous operation.');
 		}
 		
 		public function _encode():*
 		{
 			var encodedObject:Object = {};
 			encodedObject["__op"] = "Add";
-			encodedObject["objects"] = ParseClient.encode(this.objects, true);
+			encodedObject["objects"] = ParseClient.encode(this._objects, true);
 			return encodedObject;
 		}
 	}

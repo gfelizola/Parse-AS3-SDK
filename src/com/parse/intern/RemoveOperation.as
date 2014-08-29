@@ -5,23 +5,25 @@ package com.parse.intern
 
 	public class RemoveOperation implements FieldOperation
 	{
-		private var objects:Array;
+		private var _objects:Array;
 		
 		public function RemoveOperation(objs:Array)
 		{
 			if(! objs is Array ){
 				throw new ParseError("RemoveOperation requires an array.");
 			}
-			this.objects = objs;
+			this._objects = objs;
 		}
 		
 		public function get value():Array
 		{
-			return this.objects;
+			return this._objects;
 		}
 		
 		public function apply(oldValue:*, object:*, key:String):*
 		{
+			
+			
 //			PHP CODE
 //			if (empty($oldValue)) {
 //				return array();
@@ -51,27 +53,21 @@ package com.parse.intern
 		
 		public function mergeWithPrevious(previous:FieldOperation):FieldOperation
 		{
-//			PHP CODE
-//			if (!$previous) {
-//				return $this;
-//			}
-//			if ($previous instanceof DeleteOperation) {
-//				return $previous;
-//			}
-//			if ($previous instanceof SetOperation) {
-//				return new SetOperation(
-//					$this->_apply($previous->getValue(), $this->objects, null)
-//				);
-//			}
-//			if ($previous instanceof RemoveOperation) {
-//				$oldList = $previous->getValue();
-//				return new RemoveOperation(
-//					array_merge((array)$oldList, (array)$this->objects)
-//				);
-//			}
-//			throw new ParseException(
-//				'Operation is invalid after previous operation.'
-//			);
+			if( ! previous ) return this;
+			
+			if( previous is DeleteOperation ){
+				return previous;
+			}
+			
+			if( previous is SetOperation ){
+				return new SetOperation( this.apply( SetOperation(previous).value, this._objects, null) );
+			}
+			
+			if( previous is RemoveOperation ){
+				return new RemoveOperation( RemoveOperation(previous).value.concat( this._objects ) );
+			}
+			
+			throw new ParseError('Operation is invalid after previous operation.');
 			
 			return null;
 		}
@@ -80,7 +76,7 @@ package com.parse.intern
 		{
 			var encodedObject:Object = {};
 			encodedObject["__op"] = "Remove";
-			encodedObject["objects"] = ParseClient.encode(this.objects, true);
+			encodedObject["objects"] = ParseClient.encode(this._objects, true);
 			return encodedObject;
 		}
 	}
