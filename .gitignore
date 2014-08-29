@@ -1,5 +1,5 @@
 # Build and Release Folders
-bin/
+# bin/ <- maintain SWC versioning
 bin-debug/
 bin-release/
 
